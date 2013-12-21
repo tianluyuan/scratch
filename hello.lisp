@@ -40,3 +40,20 @@
 (car (car '((a b) (b c))))
 (car '(a b))
 (cons '(a b) '())
+
+;; testing recursive addition and multiplication
+(defun o+ (n m)
+  (cond
+   ((zerop m) n)
+   (t (1+ (o+ n (1- m))))))
+
+(o+ 5 6)
+
+(defun ox (n m)
+  (cond
+   ((zerop m) 0)
+   (t (o+ n (ox n (1- m))))))
+
+;; lisp default implementations of +/* are not recursive!
+(* 100 100)
+(ox 100 100)
