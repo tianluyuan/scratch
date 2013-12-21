@@ -1,4 +1,6 @@
 ;; This buffer contains some functions written for the purposes of learning lisp
+;; To evalulate a line in emacs do C-x C-e and the result will show up in the mini-buffer
+;; and the *Messages* buffer
 
 (atom ())
 (listp '())
@@ -35,7 +37,7 @@
    ((eq (car lat) old) (cons old (cons new (cdr lat))))
    (t (cons (car lat) (insertR new old (cdr lat))))))
 
-(insertR 'd 'b '(a b c))
+(insertR 'topping 'fudge '(ice cream fudge sundae))
 
 (car (car '((a b) (b c))))
 (car '(a b))
