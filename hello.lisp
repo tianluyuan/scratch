@@ -8,6 +8,16 @@
 (/ 3.0 5.0)
 (car '('(a b) '(c d)))
 
+(defun hello_concat (a)
+  (cond
+   ((null a) "hello")
+   (t (concat  (hello_concat (cdr a)) ", " (car a)))))
+
+(defun hello (a)
+  (hello_concat (reverse a)))
+
+(hello '("world" "earth" "universe" "tianlu"))
+
 (defun rem (a lat)
   (cond
    ((null lat) '())
