@@ -1,6 +1,8 @@
+import sys
 import copy
 
-change_units = (1,5,10,25,50)
+# change_units = (1,5,10,25,50)
+change_units = (50,25,10,5,1)
 
 def sum_change(change_list):
     sum = 0
@@ -40,3 +42,5 @@ def break_change_wrapper(n_cents):
     break_change(n_cents)
     return change
 
+if __name__=='__main__':
+    print 'Number of ways to break', sys.argv[1], 'cents:', len(break_change_wrapper(int(sys.argv[1])))
