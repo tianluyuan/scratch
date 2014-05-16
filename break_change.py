@@ -1,8 +1,8 @@
 import sys
 import copy
 
-# change_units = (1,5,10,25,50)
-change_units = (50,25,10,5,1)
+change_units = (1,5,10,25,50)
+# change_units = (50,25,10,5,1)
 
 def sum_change(change_list):
     sum = 0
@@ -25,6 +25,10 @@ def break_change_wrapper(n_cents):
         curr_change_sum = sum_change(curr_change)
         if not cache.has_key(curr_change_sum):
             cache[curr_change_sum]= break_change_wrapper(curr_change_sum)
+
+        remainder = abs(n_cents - curr_change_sum)
+        if remainder < n_cents and (not cache.has_key(remainder)):
+            cache[remainder]= break_change_wrapper(remainder)
 
         if cache.has_key(n_cents):
             remainder_change = cache[n_cents]
