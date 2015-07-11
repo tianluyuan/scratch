@@ -69,3 +69,17 @@
 ;; lisp default implementations of +/* are not recursive!
 (* 100 100)
 (ox 100 100)
+
+;; quicksort
+(defvar unsorted '(1 2 3 2 1))
+
+(defun qs_iterate (unsorted less greater)
+  (cond
+  
+                   
+(defun quicksort (unsorted less greater)
+  (defvar pivot (car unsorted)
+    (loop cdr unsorted)
+    (cond
+     ((< 
+  )
