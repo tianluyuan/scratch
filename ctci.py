@@ -23,6 +23,18 @@ def permute_string(string):
     return permuted
 
 
+def rand7_optimized():
+    """ Given rand5 implement rand7 using bitvector
+    """
+    from random import randint
+
+    bitvect = (int(randint(0,5) < 3),
+               int(randint(0,5) < 3),
+               int(randint(0,5) < 3))
+
+    return(int('{}{}{}'.format(*bitvect),2))
+
+
 def rand7():
     """ Given rand5 implement rand7
     """
