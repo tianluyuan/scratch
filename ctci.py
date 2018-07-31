@@ -196,14 +196,19 @@ def encrypt(msg):
     """
     import random
     lmsg = map(ord, msg)
-    primes = sieve(1000)
+    primes = sieve(1000)[1:]
     
     p = primes[random.randint(0, len(primes)-1)]
     primes.remove(p)
     q = primes[random.randint(0, len(primes)-1)]
     n = p*q
-    e = (p-1)*(q-1)-1
-    return n, e, [mod_exp(imsg, e, n) for imsg in lmsg]
+    phi = (p-1)*(q-1)
+    e = min(p,q)
+    for i in xrange(e, phi, 2):
+        if (e*i) % phi == 1:
+            d = i
+            break
+    return n, d, [mod_exp(imsg, e, n) for imsg in lmsg]
 
 
 def decrypt(enc):
