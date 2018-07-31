@@ -154,14 +154,56 @@ def evens(x):
     return bool(x % 2 ^ evens(x/2))
 
 
-def encrypt(msg):
-    lmsg = map(ord, msg)
+@memoize
+def sieve(upto):
+    """ The sieve algorithm to get all primes less than 'upto'
+    """
+    from math import sqrt
+    primes = [2]
+    possibles = range(3, upto, 2)
+    while primes[-1] < sqrt(upto):
+        primes.append(possibles[0])
+        possibles = [x for x in possibles if x % primes[-1]]
 
-    n = 3233
-    e = 3119
-    return e, [(imsg**e) % n for imsg in lmsg]
+    return primes + possibles
+
+
+def mod_exp(m, e, n):
+    """ Perform modulo exponentiation
+
+    Returns m**2 (mod n)
+    """
+    c = 1
+    for i in xrange(e):
+        c = (c*m) % n
+    return c
+
+
+def encrypt(msg):
+    """
+    msg (str): string to be encrypted
+
+    Encrypts a string *msg* using RSA-based approach
+
+    Returns tuple with public key, private key, and encrypted message array
+    """
+    import random
+    lmsg = map(ord, msg)
+    primes = sieve(1000)
+    
+    p = primes[random.randint(0, len(primes)-1)]
+    primes.remove(p)
+    q = primes[random.randint(0, len(primes)-1)]
+    n = p*q
+    e = (p-1)*(q-1)-1
+    return n, e, [mod_exp(imsg, e, n) for imsg in lmsg]
 
 
 def decrypt(enc):
-    n = 3233
-    return ''.join([chr((ienc**enc[0]) % n) for ienc in enc[1]])
+    """
+    enc (tuple): first element is public key, second element is
+    private key, second element the encrypted message array
+
+    Returns decrypted message (str)
+    """
+    return ''.join([chr(mod_exp(ienc, enc[1], enc[0])) for ienc in enc[2]])
