@@ -202,7 +202,7 @@ def encrypt(msg):
 def decrypt(enc):
     """
     enc (tuple): first element is public key, second element is
-    private key, second element the encrypted message array
+    private key, third element the encrypted message array
 
     Returns decrypted message (str)
     """
