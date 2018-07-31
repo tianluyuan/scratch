@@ -192,7 +192,7 @@ def encrypt(msg):
 
     Encrypts a string *msg* using RSA-based approach
 
-    Returns tuple with public key, private key, and encrypted message array
+    Returns tuple with public modulo, private key, and encrypted message array
     """
     import random
     lmsg = map(ord, msg)
