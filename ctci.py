@@ -131,3 +131,37 @@ class bst(object):
                 self.update_parent(node.parent, node.right)
             elif node.right is None:
                 self.update_parent(node.parent, node.left)
+
+
+def memoize(func):
+    import functools
+    dd = {}
+    @functools.wraps(func)
+    def func_wrapped(*args, **kwargs):
+        if not dd.has_key(args):
+            dd[args] = func(*args, **kwargs)
+        return dd[args]
+
+    return func_wrapped
+
+
+@memoize
+def evens(x):
+    """ returns true if int x has even number of 1s in binary
+    """
+    if not x:
+        return True
+    return bool(x % 2 ^ evens(x/2))
+
+
+def encrypt(msg):
+    lmsg = map(ord, msg)
+
+    n = 3233
+    e = 3119
+    return e, [(imsg**e) % n for imsg in lmsg]
+
+
+def decrypt(enc):
+    n = 3233
+    return ''.join([chr((ienc**enc[0]) % n) for ienc in enc[1]])
