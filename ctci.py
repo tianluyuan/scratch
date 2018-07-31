@@ -169,9 +169,14 @@ def sieve(upto):
 
 
 def mod_exp(m, e, n):
-    """ Perform modulo exponentiation
+    """ 
+    m (int): base
+    e (int): exponent
+    n (int): modulo
 
-    Returns m**2 (mod n)
+    Perform modulo exponentiation
+
+    Returns m**e (mod n)
     """
     c = 1
     for i in xrange(e):
