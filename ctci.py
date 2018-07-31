@@ -203,10 +203,13 @@ def encrypt(msg):
     q = primes[random.randint(0, len(primes)-1)]
     n = p*q
     phi = (p-1)*(q-1)
-    e = min(p,q)
-    for i in xrange(e, phi, 2):
-        if (e*i) % phi == 1:
-            d = i
+    e = max(q,p)
+    for pr in primes:
+        if phi % pr:
+            e = pr
+            break
+    for d in xrange(e, phi, 2):
+        if (e*d) % phi == 1:
             break
     return n, d, [mod_exp(imsg, e, n) for imsg in lmsg]
 
