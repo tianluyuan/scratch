@@ -133,6 +133,7 @@ class bst(object):
                 self.update_parent(node.parent, node.left)
 
 
+# Carbon1
 def memoize(func):
     import functools
     dd = {}
@@ -154,6 +155,7 @@ def evens(x):
     return bool(x % 2 ^ evens(x/2))
 
 
+# Carbon2
 @memoize
 def sieve(upto):
     """ The sieve algorithm to get all primes less than 'upto'
