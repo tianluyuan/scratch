@@ -1,7 +1,7 @@
 import timeit
 import numpy as np
 from mpmath import hyp2f1 as mph2f1
-from scipy.special import hyp2f1, gammaln, poch, gamma
+from scipy.special import hyp2f1, gammaln, poch, gamma, eval_jacobi
 
 
 def trans_15_3_3(a,b,c,z):
@@ -48,6 +48,14 @@ def poch_sum_ln_15_4_1(a,b,c,z):
     return np.exp(pochln(-m,n)+pochln(b,n)+n*np.log(z)-pochln(c,n)-gammaln(n+1)).sum()
 
 
+def jacobi_15_4_6(a,b,c,z):
+    n = -a
+    alpha = c-1
+    beta = b-n-alpha-1
+
+    return np.exp(gammaln(n+1)-pochln(alpha+1,n))*eval_jacobi(n,alpha,beta,1-2*z)
+
+
 b=36.5
 z = -1/2.
 st = 120
@@ -69,11 +77,11 @@ end = timeit.default_timer()
 print 'scipy transformed took', end-start
 
 start = timeit.default_timer()
-psout = [poch_sum_15_4_1(-_, b, -_-1/2., z) for _ in range(st, en,2)]
+jbout = [jacobi_15_4_6(-_, b, -_-1/2., z) for _ in range(st, en,2)]
 end = timeit.default_timer()
-print 'scipy pochsum took', end-start
+print 'scipy jacobi took', end-start
 
 
-print 'mpmath    scipy    transformed    pochsum'
-for m, s, t, p in zip(mpout, spout, tfout, psout):
-    print m, s, t, p
+print 'mpmath    scipy    transformed    jacobi'
+for m, s, t, j in zip(mpout, spout, tfout, jbout):
+    print m, s, t, j
