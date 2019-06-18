@@ -77,11 +77,16 @@ end = timeit.default_timer()
 print 'scipy transformed took', end-start
 
 start = timeit.default_timer()
+psout = [poch_sum_15_4_1(-_, b, -_-1/2., z) for _ in range(st, en,2)]
+end = timeit.default_timer()
+print 'scipy pochsum took', end-start
+
+start = timeit.default_timer()
 jbout = [jacobi_15_4_6(-_, b, -_-1/2., z) for _ in range(st, en,2)]
 end = timeit.default_timer()
 print 'scipy jacobi took', end-start
 
 
-print 'mpmath    scipy    transformed    jacobi'
-for m, s, t, j in zip(mpout, spout, tfout, jbout):
-    print m, s, t, j
+print 'mpmath    scipy    transformed    pochsum    jacobi'
+for m, s, t, p, j in zip(mpout, spout, tfout, psout, jbout):
+    print m, s, t, p, j
