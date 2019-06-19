@@ -45,7 +45,7 @@ def poch_sum_15_4_1(a,b,c,z):
 def poch_sum_ln_15_4_1(a,b,c,z):
     m = -a
     n = np.arange(m+1)
-    return np.exp(pochln(-m,n)+pochln(b,n)+n*np.log(z)-pochln(c,n)-gammaln(n+1)).sum()
+    return np.sum(poch(-m,n)*z**n*np.exp(pochln(b,n)-gammaln(n+1))/poch(c,n))
 
 
 def jacobi_15_4_6(a,b,c,z):
@@ -77,7 +77,7 @@ end = timeit.default_timer()
 print 'scipy transformed took', end-start
 
 start = timeit.default_timer()
-psout = [poch_sum_15_4_1(-_, b, -_-1/2., z) for _ in range(st, en,2)]
+psout = [poch_sum_ln_15_4_1(-_, b, -_-1/2., z) for _ in range(st, en,2)]
 end = timeit.default_timer()
 print 'scipy pochsum took', end-start
 
