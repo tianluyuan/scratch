@@ -13,8 +13,8 @@ def trans_15_3_4(a,b,c,z):
 
 
 def trans_15_3_6(a,b,c,z):
-    return (np.exp(gammaln(c)+gammaln(c-a-b)-gammaln(c-b)-gammaln(c-a))*hyp2f1(a,b,a+b-c+1, 1-z)+
-                np.exp((c-a-b) * np.log(1-z)+gammaln(c)+gammaln(a+b-c)-gammaln(a)-gammaln(b))*hyp2f1(c-a,c-b,c-a-b+1,1-z))
+    return np.exp(pochln2(c-b, -a)+gammaln(c)-gammaln(c-a))*hyp2f1(a,b,a+b-c+1, 1-z)# +
+                # np.exp((c-a-b) * np.log(1-z)+gammaln(c)+gammaln(a+b-c)-gammaln(a)-gammaln(b))*hyp2f1(c-a,c-b,c-a-b+1,1-z))
 
 
 def trans_15_3_7(a,b,c,z):
@@ -34,6 +34,11 @@ def trans_15_3_9(a,b,c,z):
 
 def pochln(z,m):
     return gammaln(z+m)-gammaln(z)
+
+
+def pochln2(z,m):
+    assert z<0 and z+m <0
+    return gammaln(-z+1)-gammaln(-z-m+1)
 
 
 def poch_sum_15_4_1(a,b,c,z):
@@ -56,8 +61,8 @@ def jacobi_15_4_6(a,b,c,z):
     return np.exp(gammaln(n+1)-pochln(alpha+1,n))*eval_jacobi(n,alpha,beta,1-2*z)
 
 
-b=36.5
-z = -1/2.
+b=46.5
+z = -0.5
 st = 120
 en = 160
 
@@ -72,7 +77,7 @@ end = timeit.default_timer()
 print 'scipy took', end-start
 
 start = timeit.default_timer()
-tfout = [trans_15_3_7(-_, b, -_-1/2., z) for _ in range(st, en,2)]
+tfout = [trans_15_3_6(-_, b, -_-1/2., z) for _ in range(st, en,2)]
 end = timeit.default_timer()
 print 'scipy transformed took', end-start
 
