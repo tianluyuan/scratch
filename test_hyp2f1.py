@@ -7,9 +7,26 @@ import tqdm
 
 
 def trans_last(a,b,c,z):
+    return recura(a,b,c,z)
+
+
+def trans_0014(a,b,c,z):
+    """ http://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/17/02/09/0014/"""
+    # print 'args', a, c-b, a-b+1,1/(1-z)
+    # print 'compare', mph2f1(a, c-b, a-b+1,1/(1-z)), hyp2f1(a, c-b, a-b+1,1/(1-z))
+
+    _ = gammaln(1-b)+gammaln(a-c+1)
+    # print np.exp(_-gammaln(a-b+1)-gammaln(1-c)-a*np.log(1-z))
+    # return (-np.exp(_+gammaln(c)-gammaln(2-c)-gammaln(a)-gammaln(c-b)+(1-c)*np.log(-z))*hyp2f1(b-c+1,a-c+1,2-c,z)+
+    #             np.exp(_-gammaln(a-b+1)-gammaln(1-c)-a*np.log(1-z))*hyp2f1(a, c-b, a-b+1,1/(1-z)))
+    return ((-1)**a*np.exp(_-gammaln(a-b+1)-gammaln(1-c)-a*np.log(1-z))*hyp2f1(a, c-b, a-b+1,1/(1-z)))
+    
+
+def trans_0015(a,b,c,z):
     """ http://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/17/02/09/0015/"""
-    # print c-a,b,b-a+1,1/(1-z)
-    # print mph2f1(c-a,b,b-a+1,1/(1-z)), hyp2f1(c-a,b,b-a+1,1/(1-z))
+    print c-a,b,b-a+1,1/(1-z)
+    print mph2f1(c-a,b,b-a+1,1/(1-z)), hyp2f1(c-a,b,b-a+1,1/(1-z))
+    print mph2f1(b-c+1,a-c+1,2-c,z), hyp2f1(b-c+1,a-c+1,2-c,z)
     # print mph2f1(b-c+1,a-c+1,2-c,z), hyp2f1(b-c+1,a-c+1,2-c,z)
     _ = gammaln(1-a)+gammaln(b-c+1)
     return (np.exp(_-gammaln(b-a+1)-gammaln(1-c)-b*np.log(1-z))*hyp2f1(c-a,b,b-a+1,1/(1-z))+
@@ -117,40 +134,40 @@ def recura(a,b,c,z):
     a += 1
     return ((a*(1-z))*recura(a+1,b,c,z)-(2*a-c+(b-a)*z) * recura(a,b,c,z))/(c-a)
 
-b=40.5
-ll=69
-z = -0.3
-st = 10
-en = 50
+kk=120.5
+ll=59
+z = -0.78
+st = 100
+en = 120
 step = 2
 
 start = timeit.default_timer()
-mpout = [mph2f1(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
+mpout = [mph2f1(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
 print 'mpmath took', end-start
 
 start = timeit.default_timer()
-spout = [hyp2f1(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
+spout = [hyp2f1(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
 print 'scipy took', end-start
 
 start = timeit.default_timer()
-tfout = [trans_last(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
+tfout = [trans_last(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
 print 'scipy transform took', end-start
 
 start = timeit.default_timer()
-tpout = [trans_poch(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
+tpout = [trans_poch(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
 print 'scipy trans_poch took', end-start
 
 # start = timeit.default_timer()
-# psout = [trans_poch2(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
+# psout = [trans_poch2(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 # end = timeit.default_timer()
 # print 'scipy trans_poch_2 took', end-start
 
 start = timeit.default_timer()
-rrout = [recura(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
+rrout = [recura(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
 print 'scipy recura took', end-start
 
@@ -161,19 +178,19 @@ for m, s, f, t, j in zip(mpout, spout, tfout, tpout, rrout):
 
 
 def myhyp2f1(a,b,c,z):
-    if z<0 and b-a+1<a-c:
+    if z<0:
         # print 'hi'
         return trans_last(a,b,c,z)
     return hyp2f1(a,b,c,z)
 
-from itertools import product
-lls = range(0,100,10)
-kks = range(0,200,10)
-jjs = range(30, 200, 10)
-ms = np.linspace(-0.99,0.99,51)
-# mp.dps = 80
-for jj, kk, ll, m in tqdm.tqdm(product(jjs, kks, lls, ms), total=len(lls)*len(kks)*len(jjs)*len(ms)):
-    mh = mph2f1(-jj, kk+0.5, 0.5-jj-ll, -m)
-    relerr = np.abs(mh-myhyp2f1(-jj, kk+0.5, 0.5-jj-ll, -m))/mh
-    if relerr > 0.05:
-        print -jj, kk+0.5, 0.5-jj-ll, -m, relerr
+# from itertools import product
+# lls = range(0,100,10)
+# kks = range(0,200,10)
+# jjs = range(30, 200, 10)
+# ms = np.linspace(-0.99,0.99,51)
+# # mp.dps = 80
+# for jj, kk, ll, m in tqdm.tqdm(product(jjs, kks, lls, ms), total=len(lls)*len(kks)*len(jjs)*len(ms)):
+#     mh = mph2f1(-jj, kk+0.5, 0.5-jj-ll, -m)
+#     relerr = np.abs(mh-myhyp2f1(-jj, kk+0.5, 0.5-jj-ll, -m))/mh
+#     if relerr > 0.05:
+#         print -jj, kk+0.5, 0.5-jj-ll, -m, relerr
