@@ -7,8 +7,15 @@ import tqdm
 
 
 def trans_last(a,b,c,z):
-    return recura(a,b,c,z)
+    return trans_15_3_4_and_3(a,b,c,z)
 
+
+def trans_so_490418(a,b,c,z):
+    x = 1/(1-z)
+    print c-a, b, c, 1-x
+    print mph2f1(c-a, b, c, 1-x), hyp2f1(c-a, b, c, 1-x)
+    return x**(-b)*mph2f1(c-a, b, c, 1-x)
+    
 
 def trans_0014(a,b,c,z):
     """ http://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/17/02/09/0014/"""
@@ -24,9 +31,9 @@ def trans_0014(a,b,c,z):
 
 def trans_0015(a,b,c,z):
     """ http://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/17/02/09/0015/"""
-    print c-a,b,b-a+1,1/(1-z)
-    print mph2f1(c-a,b,b-a+1,1/(1-z)), hyp2f1(c-a,b,b-a+1,1/(1-z))
-    print mph2f1(b-c+1,a-c+1,2-c,z), hyp2f1(b-c+1,a-c+1,2-c,z)
+    # print c-a,b,b-a+1,1/(1-z)
+    # print mph2f1(c-a,b,b-a+1,1/(1-z)), hyp2f1(c-a,b,b-a+1,1/(1-z))
+    # print mph2f1(b-c+1,a-c+1,2-c,z), hyp2f1(b-c+1,a-c+1,2-c,z)
     # print mph2f1(b-c+1,a-c+1,2-c,z), hyp2f1(b-c+1,a-c+1,2-c,z)
     _ = gammaln(1-a)+gammaln(b-c+1)
     return (np.exp(_-gammaln(b-a+1)-gammaln(1-c)-b*np.log(1-z))*hyp2f1(c-a,b,b-a+1,1/(1-z))+
@@ -47,12 +54,21 @@ def trans_15_3_3(a,b,c,z):
 
 def trans_15_3_4(a,b,c,z):
     # print a, c-b, c, z/(z-1)
-    # return (1-z)**(-a)*hyp2f1(a,c-b,c,z/(z-1))
+    # print mph2f1(a,c-b,c,z/(z-1)),trans_15_3_3(a,c-b,c,z/(z-1))
+
     return (1-z)**(-a)*hyp2f1(a,c-b,c,z/(z-1))
 
 
+def trans_15_3_4_and_3(a,b,c,z):
+    print c-a,b,c,z/(z-1)
+    print hyp2f1(c-a,b,c,z/(z-1)), hyp2f1(c-a+0.5,b,c,z/(z-1))
+
+    return (1-z)**(-b)*hyp2f1(c-a,b,c,z/(z-1))
+
+
 def trans_15_3_5(a,b,c,z):
-    # print a, c-b, c, z/(z-1)
+    # print b,c-a,c,z/(z-1)
+    # print mph2f1(b,c-a,c,z/(z-1)), hyp2f1(b,c-a,c,z/(z-1))
     return (1-z)**(-b)*hyp2f1(b,c-a,c,z/(z-1))
 
 
