@@ -7,10 +7,13 @@ import tqdm
 
 
 def trans_last(a,b,c,z):
+    """ http://functions.wolfram.com/HypergeometricFunctions/Hypergeometric2F1/17/02/09/0015/"""
     # print c-a,b,b-a+1,1/(1-z)
     # print mph2f1(c-a,b,b-a+1,1/(1-z)), hyp2f1(c-a,b,b-a+1,1/(1-z))
     # print mph2f1(b-c+1,a-c+1,2-c,z), hyp2f1(b-c+1,a-c+1,2-c,z)
-    return np.exp(gammaln(1-a)+gammaln(b-c+1)-gammaln(b-a+1)-gammaln(1-c)-b*np.log(1-z))*hyp2f1(c-a,b,b-a+1,1/(1-z))+np.exp(gammaln(1-a)+gammaln(b-c+1)+gammaln(c)-gammaln(b)-gammaln(2-c)-gammaln(c-a)+(1-c)*np.log(-z))*hyp2f1(b-c+1,a-c+1,2-c,z)
+    _ = gammaln(1-a)+gammaln(b-c+1)
+    return (np.exp(_-gammaln(b-a+1)-gammaln(1-c)-b*np.log(1-z))*hyp2f1(c-a,b,b-a+1,1/(1-z))+
+                np.exp(_+gammaln(c)-gammaln(b)-gammaln(2-c)-gammaln(c-a)+(1-c)*np.log(-z))*hyp2f1(b-c+1,a-c+1,2-c,z))
 
 
 def poly_4(a,b,c,z):
