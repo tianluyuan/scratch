@@ -164,7 +164,7 @@ def myhyp2f1(a,b,c,z):
     if z<0 and b-a+1<a-c:
         # print 'hi'
         return trans_last(a,b,c,z)
-    return mph2f1(a,b,c,z)
+    return hyp2f1(a,b,c,z)
 
 from itertools import product
 lls = range(0,100,10)
