@@ -6,31 +6,57 @@ from scipy.special import hyp2f1, gammaln, poch, gamma, eval_jacobi
 import tqdm
 
 
+def trans_last(a,b,c,z):
+    # print c-a,b,b-a+1,1/(1-z)
+    # print mph2f1(c-a,b,b-a+1,1/(1-z)), hyp2f1(c-a,b,b-a+1,1/(1-z))
+    # print mph2f1(b-c+1,a-c+1,2-c,z), hyp2f1(b-c+1,a-c+1,2-c,z)
+    return np.exp(gammaln(1-a)+gammaln(b-c+1)-gammaln(b-a+1)-gammaln(1-c)-b*np.log(1-z))*hyp2f1(c-a,b,b-a+1,1/(1-z))+np.exp(gammaln(1-a)+gammaln(b-c+1)+gammaln(c)-gammaln(b)-gammaln(2-c)-gammaln(c-a)+(1-c)*np.log(-z))*hyp2f1(b-c+1,a-c+1,2-c,z)
+
+
+def poly_4(a,b,c,z):
+    n = b-c
+    # print -n, a, a-b+1, 1/(1-z)
+    # print mph2f1(-n, a, a-b+1, 1/(1-z)), trans_15_3_4(-n, a, a-b+1, 1/(1-z))
+    return np.exp(pochln(a-b+1,n)-pochln(1-b,n)-a*np.log(1-z))*hyp2f1(-n, a, a-b+1, 1/(1-z))
+
+
 def trans_15_3_3(a,b,c,z):
-    return np.exp((c-a-b) * np.log(1-z) +np.log(hyp2f1(c-a, c-b, c, z)))
+    # print c-a, c-b, c, z
+    return (1-z)**(c-a-b)*hyp2f1(c-a, c-b, c, z)
 
 
 def trans_15_3_4(a,b,c,z):
+    # print a, c-b, c, z/(z-1)
+    # return (1-z)**(-a)*hyp2f1(a,c-b,c,z/(z-1))
     return (1-z)**(-a)*hyp2f1(a,c-b,c,z/(z-1))
 
 
 def trans_15_3_5(a,b,c,z):
+    # print a, c-b, c, z/(z-1)
     return (1-z)**(-b)*hyp2f1(b,c-a,c,z/(z-1))
 
 
 def trans_15_3_7(a,b,c,z):
+    # print mph2f1(a,1-c+a,1-b+a,1/z), trans_15_3_3(a,1-c+a,1-b+a,1/z)
     return (np.exp(-a * np.log(-z)+gammaln(c)+gammaln(b-a)-gammaln(b)-gammaln(c-a))*hyp2f1(a,1-c+a,1-b+a,1/z)+
                 np.exp(-b * np.log(-z)+gammaln(c)+gammaln(a-b)-gammaln(a)-gammaln(c-b))*hyp2f1(b,1-c+b,1-a+b,1/z))
 
 
 def trans_15_3_8(a,b,c,z):
+    # print mph2f1(a,c-b,a-b+1,1/(1-z)), trans_15_3_3(a,c-b,a-b+1,1/(1-z))
     return (np.exp(-a * np.log(1-z)+gammaln(c)+gammaln(b-a)-gammaln(b)-gammaln(c-a))*hyp2f1(a,c-b,a-b+1,1/(1-z))+
                 np.exp(-b * np.log(1-z)+gammaln(c)+gammaln(a-b)-gammaln(a)-gammaln(c-b))*hyp2f1(b,c-a,b-a+1,1/(1-z)))
 
 
 def trans_15_3_9(a,b,c,z):
-    return (np.exp(-a * np.log(z)+gammaln(c)+gammaln(c-b-a)-gammaln(c-b)-gammaln(c-a))*hyp2f1(a,a-c+1,a+b-c+1,1-1/z)+
-                np.float_power(z,a-c)*np.exp((c-a-b) * np.log(1-z)+gammaln(c)+gammaln(a+b-c)-gammaln(a)-gammaln(b))*hyp2f1(c-a,1-a,c-a-b+1,1-1/z))
+    # print mph2f1(a,a-c+1,a+b-c+1,1-1/z), hyp2f1(a,a-c+1,a+b-c+1,1-1/z)
+    # print mph2f1(c-a,1-a,c-a-b+1,1-1/z), hyp2f1(c-a,1-a,c-a-b+1,1-1/z)
+    # print gammaln(c-b-a)
+    # return (np.exp(-a * np.log(z)+gammaln(c)+gammaln(c-b-a)-gammaln(c-b)-gammaln(c-a))*hyp2f1(a,a-c+1,a+b-c+1,1-1/z)+
+    #             np.float_power(z,a-c)*np.exp((c-a-b) * np.log(1-z)+gammaln(c)+gammaln(a+b-c)-gammaln(a)-gammaln(b))*hyp2f1(c-a,1-a,c-a-b+1,1-1/z))
+    # print pochln2(c-b,-a)
+    # print a-c+1, a+b-c+1
+    return z**(-a)*np.exp(gammaln(c)+pochln2(c-b,-a)-gammaln(c-a))*hyp2f1(a,a-c+1,a+b-c+1,1-1/z)
 
 
 def trans_poch(a,b,c,z):
@@ -52,7 +78,7 @@ def pochln(z,m):
 
 
 def pochln2(z,m):
-    assert z<1 and z+m <1
+    # assert z<1 and z+m <1
     return gammaln(-z+1)-gammaln(-z-m+1)
 
 
@@ -88,48 +114,54 @@ def recura(a,b,c,z):
     a += 1
     return ((a*(1-z))*recura(a+1,b,c,z)-(2*a-c+(b-a)*z) * recura(a,b,c,z))/(c-a)
 
-b=36.5
-ll=0
-z = -0.5
-st = 40
-en = 160
+b=40.5
+ll=69
+z = -0.3
+st = 10
+en = 50
 step = 2
 
 start = timeit.default_timer()
-mpout = [mph2f1(-_, b, -_-ll-1/2., z) for _ in range(st, en,step)]
+mpout = [mph2f1(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
 print 'mpmath took', end-start
 
 start = timeit.default_timer()
-spout = [hyp2f1(-_, b, -_-ll-1/2., z) for _ in range(st, en,step)]
+spout = [hyp2f1(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
 print 'scipy took', end-start
 
 start = timeit.default_timer()
-tfout = [trans_poch(-_, b, -_-ll-1/2., z) for _ in range(st, en,step)]
+tfout = [trans_last(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
+end = timeit.default_timer()
+print 'scipy transform took', end-start
+
+start = timeit.default_timer()
+tpout = [trans_poch(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
 print 'scipy trans_poch took', end-start
 
-start = timeit.default_timer()
-psout = [trans_poch2(-_, b, -_-ll-1/2., z) for _ in range(st, en,step)]
-end = timeit.default_timer()
-print 'scipy trans_poch_2 took', end-start
+# start = timeit.default_timer()
+# psout = [trans_poch2(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
+# end = timeit.default_timer()
+# print 'scipy trans_poch_2 took', end-start
 
 start = timeit.default_timer()
-rrout = [recura(-_, b, -_-ll-1/2., z) for _ in range(st, en,step)]
+rrout = [recura(-_, b, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
 print 'scipy recura took', end-start
 
 
-print 'mpmath    scipy    trans_poch    trans_poch_2    recura'
-for m, s, t, p, j in zip(mpout, spout, tfout, psout, rrout):
-    print m, s, t, p, j
+print 'mpmath    scipy    transformed    trans_poch    recura'
+for m, s, f, t, j in zip(mpout, spout, tfout, tpout, rrout):
+    print m, s, f, t, j
 
 
 def myhyp2f1(a,b,c,z):
-    if z < 0 and c-b-a <= 1:
-        return trans_poch2(a,b,c,z)
-    return hyp2f1(a,b,c,z)
+    if z<0 and b-a+1<a-c:
+        # print 'hi'
+        return trans_last(a,b,c,z)
+    return mph2f1(a,b,c,z)
 
 from itertools import product
 lls = range(0,100,10)
