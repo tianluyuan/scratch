@@ -23,14 +23,14 @@ def break_change_wrapper(n_cents):
             return
 
         curr_change_sum = sum_change(curr_change)
-        if not cache.has_key(curr_change_sum):
+        if curr_change_sum not in cache:
             cache[curr_change_sum]= break_change_wrapper(curr_change_sum)
 
         remainder = abs(n_cents - curr_change_sum)
-        if remainder < n_cents and (not cache.has_key(remainder)):
+        if remainder < n_cents and (remainder not in cache):
             cache[remainder]= break_change_wrapper(remainder)
 
-        if cache.has_key(n_cents):
+        if n_cents in cache:
             remainder_change = cache[n_cents]
             for a_remainder in remainder_change:
                 change.add(tuple(sum(x) for x in zip(a_remainder, curr_change)))
@@ -47,4 +47,4 @@ def break_change_wrapper(n_cents):
     return change
 
 if __name__=='__main__':
-    print 'Number of ways to break', sys.argv[1], 'cents:', len(break_change_wrapper(int(sys.argv[1])))
+    print('Number of ways to break', sys.argv[1], 'cents:', len(break_change_wrapper(int(sys.argv[1]))))
