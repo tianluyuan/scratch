@@ -19,7 +19,7 @@ def pwnTimi(number):
     biglist.sort(reverse=True)
 
     highest = biglist[0]
-    print highest
+    print(highest)
     return
 
 if __name__=='__main__':

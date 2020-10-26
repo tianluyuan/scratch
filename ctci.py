@@ -139,7 +139,7 @@ def memoize(func):
     dd = {}
     @functools.wraps(func)
     def func_wrapped(*args, **kwargs):
-        if not dd.has_key(args):
+        if args not in dd:
             dd[args] = func(*args, **kwargs)
         return dd[args]
 
@@ -162,7 +162,7 @@ def sieve(upto):
     """
     from math import sqrt
     primes = [2]
-    possibles = range(3, upto, 2)
+    possibles = list(range(3, upto, 2))
     while primes[-1] < sqrt(upto):
         primes.append(possibles[0])
         possibles = [x for x in possibles if x % primes[-1]]
@@ -181,7 +181,7 @@ def mod_exp(m, e, n):
     Returns m**e (mod n)
     """
     c = 1
-    for i in xrange(e):
+    for i in range(e):
         c = (c*m) % n
     return c
 
@@ -195,7 +195,7 @@ def encrypt(msg):
     Returns tuple with public modulo, private key, and encrypted message array
     """
     import random
-    lmsg = map(ord, msg)
+    lmsg = list(map(ord, msg))
     primes = sieve(1000)[1:]
     
     p = primes[random.randint(0, len(primes)-1)]
@@ -208,7 +208,7 @@ def encrypt(msg):
         if phi % pr:
             e = pr
             break
-    for d in xrange(e, phi, 2):
+    for d in range(e, phi, 2):
         if (e*d) % phi == 1:
             break
     return n, d, [mod_exp(imsg, e, n) for imsg in lmsg]

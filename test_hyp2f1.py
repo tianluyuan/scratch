@@ -12,8 +12,8 @@ def trans_last(a,b,c,z):
 
 def trans_so_490418(a,b,c,z):
     x = 1/(1-z)
-    print c-a, b, c, 1-x
-    print mph2f1(c-a, b, c, 1-x), hyp2f1(c-a, b, c, 1-x)
+    print(c-a, b, c, 1-x)
+    print(mph2f1(c-a, b, c, 1-x), hyp2f1(c-a, b, c, 1-x))
     return x**(-b)*mph2f1(c-a, b, c, 1-x)
     
 
@@ -60,8 +60,8 @@ def trans_15_3_4(a,b,c,z):
 
 
 def trans_15_3_4_and_3(a,b,c,z):
-    print c-a,b,c,z/(z-1)
-    print hyp2f1(c-a,b,c,z/(z-1)), hyp2f1(c-a+0.5,b,c,z/(z-1))
+    # print(c-a,b,c,z/(z-1))
+    # print(hyp2f1(c-a,b,c,z/(z-1)), hyp2f1(c-a+0.5,b,c,z/(z-1)))
 
     return (1-z)**(-b)*hyp2f1(c-a,b,c,z/(z-1))
 
@@ -138,7 +138,7 @@ def jacobi_15_4_6(a,b,c,z):
     return np.exp(gammaln(n+1)-pochln(alpha+1,n))*eval_jacobi(n,alpha,beta,1-2*z)
 
 
-from functools32 import lru_cache
+from functools import lru_cache
 
 @lru_cache(maxsize=None)
 def recura(a,b,c,z):
@@ -160,22 +160,22 @@ step = 2
 start = timeit.default_timer()
 mpout = [mph2f1(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
-print 'mpmath took', end-start
+print('mpmath took', end-start)
 
 start = timeit.default_timer()
 spout = [hyp2f1(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
-print 'scipy took', end-start
+print('scipy took', end-start)
 
 start = timeit.default_timer()
 tfout = [trans_last(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
-print 'scipy transform took', end-start
+print('scipy transform took', end-start)
 
 start = timeit.default_timer()
 tpout = [trans_poch(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
-print 'scipy trans_poch took', end-start
+print('scipy trans_poch took', end-start)
 
 # start = timeit.default_timer()
 # psout = [trans_poch2(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
@@ -185,12 +185,12 @@ print 'scipy trans_poch took', end-start
 start = timeit.default_timer()
 rrout = [recura(-_, kk, -_-ll+1/2., z) for _ in range(st, en,step)]
 end = timeit.default_timer()
-print 'scipy recura took', end-start
+print('scipy recura took', end-start)
 
 
-print 'mpmath    scipy    transformed    trans_poch    recura'
+print('mpmath    scipy    transformed    trans_poch    recura')
 for m, s, f, t, j in zip(mpout, spout, tfout, tpout, rrout):
-    print m, s, f, t, j
+    print(m, s, f, t, j)
 
 
 def myhyp2f1(a,b,c,z):

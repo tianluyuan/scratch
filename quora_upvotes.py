@@ -5,8 +5,8 @@ find the number of non-decreasing subranges within the window minus
 the number of non-increasing subranges within the window.
 """
 
-(ndays, window_size) = map(int, raw_input().split())
-upvotes = map(int, raw_input().split())
+(ndays, window_size) = list(map(int, input().split()))
+upvotes = list(map(int, input().split()))
 
 def diff_subranges(window):
     """By keeping track of the number of consecutive decreasing/increasing
@@ -54,4 +54,4 @@ def diff_subranges(window):
 
 
 for day in range(ndays-window_size+1):
-    print diff_subranges(upvotes[day:day+window_size])
+    print(diff_subranges(upvotes[day:day+window_size]))
