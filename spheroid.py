@@ -48,8 +48,6 @@ if __name__ == '__main__':
         axs[1, 0].scatter(isc[1], isc[2], marker='.', s=1, c=isc[0], cmap='coolwarm', vmin=-RR+dompos[0], vmax=RR+dompos[0])
         axs[1, 1].scatter(*isc, marker='.', color='k', s=1)
         rmax = max(RR, RZ)
-        axs[1, 1].set_xlim((-rmax+dompos[0])*1.1, (rmax+dompos[0])*1.1)
-        axs[1, 1].set_ylim((-rmax+dompos[1])*1.1, (rmax+dompos[1])*1.1)
-        axs[1, 1].set_zlim((-rmax+dompos[2])*1.1, (rmax+dompos[2])*1.1)
+        axs[1, 1].set_aspect('equal')
 
     plt.show()
