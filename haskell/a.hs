@@ -14,7 +14,7 @@ halve x = (take h x, drop h x)
     h = length x `div` 2
 
 third :: [a] -> a
-third x = head (tail (tail x))
+third x = head (drop 1 (drop 1 x))
 
 third2 :: [a] -> a
 third2 x = x !! 2
@@ -24,14 +24,14 @@ third3 (_:(_: (x : _))) = x
 
 safetail :: [a] -> [a]
 safetail x | null x = []
-           | otherwise = tail x
+           | otherwise = drop 1 x
 
 safetail2 :: [a] -> [a]
-safetail2 x = if null x then []  else tail x
+safetail2 x = if null x then []  else drop 1 x
 
 safetail3 :: [a] -> [a]
 safetail3 [] = []
-safetail3 x = tail x
+safetail3 x = drop 1 x
 
 luhnDouble :: Int -> Int
 luhnDouble x = if tx > 9 then tx - 9 else tx
@@ -54,6 +54,24 @@ myrep m x = [x | _ <- [1..m]]
 
 pyth :: Int -> [(Int, Int, Int)]
 pyth n = concat [[(x, y, z), (y, x, z)] | x <- [1..n], y <- [1..n], z <- [1..n], x < y && y < z && x^2+y^2==z^2]
+
+dotprd :: [Int] -> [Int] -> Int
+dotprd xs ys = sum ([x * y | (x, y) <- zip xs ys])
+
+-- Hutton Ch. 6
+fac :: Int -> Int
+fac 0 = 1
+fac n | n > 0 = n * fac (n - 1)
+
+sumdown :: Int -> Int
+sumdown 0 = 0
+sumdown n | n > 0 = n + sumdown (n - 1)
+
+euclid :: Int -> Int -> Int
+euclid n m = case compare n m of
+  EQ -> n
+  LT -> euclid n (m - n)
+  GT -> euclid (n - m) m
 
 main :: IO ()
 main = do
@@ -78,3 +96,7 @@ main = do
   print (square 2)
   print (myrep 3 True)
   print (pyth 100)
+  print (dotprd [1,2,3] [1,1,2])
+  print (fac 4)
+  print (sumdown 3)
+  print (euclid 6 27)
