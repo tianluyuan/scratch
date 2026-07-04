@@ -73,6 +73,21 @@ euclid n m = case compare n m of
   LT -> euclid n (m - n)
   GT -> euclid (n - m) m
 
+merge :: Ord a => [a] -> [a] -> [a]
+merge ms [] = ms
+merge [] ns = ns
+merge (m:ms) (n:ns) | m < n = (m : merge ms (n : ns))
+                    | otherwise = (n : merge (m : ms) ns)
+
+msort :: Ord a => [a] -> [a]
+msort [] = []
+msort [x] = [x]
+msort [x, y] | x < y = [x, y]
+             | otherwise = [y, x]
+msort xs = merge (msort ys) (msort zs)
+  where
+    (ys, zs) = halve xs
+
 main :: IO ()
 main = do
   putStrLn "hello"
@@ -100,3 +115,5 @@ main = do
   print (fac 4)
   print (sumdown 3)
   print (euclid 6 27)
+  print (merge [1, 3, 5] [3, 4, 6])
+  print (msort [3, 4, 1, -2, -3])
