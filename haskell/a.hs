@@ -38,9 +38,8 @@ luhnDouble x = if tx > 9 then tx - 9 else tx
   where
     tx = 2 * x
 
-luhn :: Int -> Int -> Int -> Int -> Bool
-luhn x y z w | (luhnDouble x + y + luhnDouble z + w) `mod` 10 == 0 = True
-             | otherwise = False
+luhn4 :: Int -> Int -> Int -> Int -> Bool
+luhn4 x y z w = (luhnDouble x + y + luhnDouble z + w) `mod` 10 == 0
 
 -- Hutton Ch. 5
 grid :: Int -> Int -> [(Int, Int)]
@@ -88,6 +87,45 @@ msort xs = merge (msort ys) (msort zs)
   where
     (ys, zs) = halve xs
 
+-- Hutton Ch. 7
+foldrmap :: (a -> b) -> [a] -> [b]
+foldrmap f = foldr (\x xs -> (f x : xs)) []
+
+foldrfilt :: (a -> Bool) -> [a] -> [a]
+foldrfilt p = foldr (\x xs -> if p x then (x : xs) else xs) []
+
+dec2int :: [Int] -> Int
+dec2int = foldl (\x y -> y + 10 * x) 0
+
+unfold :: (t -> Bool) -> (t -> a) -> (t -> t) -> t -> [a]
+unfold p h t x | p x = []
+               | otherwise = h x : unfold p h t (t x)
+
+int2bin :: Int -> [Int]
+int2bin = unfold (== 0) (`mod` 2) (`div` 2)
+
+int2dec :: Int -> [Int]
+int2dec = unfold (== 0) (`mod` 10) (`div` 10)
+
+chop8 :: [a] -> [[a]]
+chop8 = unfold null (take 8) (drop 8)
+
+unfoldmap :: (a -> b) -> [a] -> [b]
+unfoldmap f = unfold null (f.head) (drop 1)
+
+unfolditer :: (a -> a) -> a -> [a]
+unfolditer f = unfold (\_ -> False) id f
+
+altmap :: (a -> b) -> (a -> b) -> [a] -> [b]
+altmap f g xs | null xs = []
+              | length xs == 1 = [f x]
+              | otherwise = [f x, g y] ++ altmap f g zs
+              where
+                (x : y : zs) = xs
+
+luhn :: [Int] -> Bool
+luhn ns = sum (altmap luhnDouble id ns) `mod` 10 == 0
+
 main :: IO ()
 main = do
   putStrLn "hello"
@@ -104,8 +142,8 @@ main = do
   print (null (safetail2 []))
   print (safetail3 [-2..4])
   print (null (safetail3 []))
-  print (luhn 1 7 8 4)
-  print (luhn 4 7 8 3)
+  print (luhn4 1 7 8 4)
+  print (luhn4 4 7 8 3)
   print (sum [x^2 | x <- [1..100]])
   print (grid 1 2)
   print (square 2)
@@ -117,3 +155,13 @@ main = do
   print (euclid 6 27)
   print (merge [1, 3, 5] [3, 4, 6])
   print (msort [3, 4, 1, -2, -3])
+  print (foldrmap sqrt [-2..4])
+  print (foldrfilt even [-2..4])
+  print (dec2int [4,1,2,3,4])
+  print (chop8 [1..24])
+  print (unfoldmap sqrt [-2..4])
+  print (zip (unfolditer (*2) 1) [1..3])
+  print (altmap (+10) (+100) [1..4])
+  print (luhn [1, 7, 8, 4])
+  print (luhn [4, 7, 8, 3])
+  print (luhn ((reverse.int2dec) 4313055180344960))
