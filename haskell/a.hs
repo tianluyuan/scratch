@@ -126,6 +126,26 @@ altmap f g xs | null xs = []
 luhn :: [Int] -> Bool
 luhn ns = sum (altmap luhnDouble id ns) `mod` 10 == 0
 
+-- Hutton Ch. 8
+data Tree a = Leaf a | Node (Tree a) a (Tree a)
+
+occurs :: Ord a => a -> Tree a -> Bool
+occurs x (Leaf y) = x == y
+occurs x (Node l y r) = case compare x y of
+  EQ -> True
+  LT -> occurs x l
+  GT -> occurs x r
+
+data Tre a = Lea a | Nod (Tre a) (Tre a)
+
+numero :: Tre a -> Int
+numero (Lea _) = 1
+numero (Nod x y) = (numero x) + (numero y)
+
+balando :: Tre a -> Bool
+balando (Lea x) = True
+balando (Nod x y) = abs ( (numero x) - (numero y) ) <= 1
+
 main :: IO ()
 main = do
   putStrLn "hello"
